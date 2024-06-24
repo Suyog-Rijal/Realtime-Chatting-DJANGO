@@ -1,0 +1,275 @@
+<div class="add_friend_container">
+
+    <div class="left">
+
+        <div class="top">
+
+            <div class="top-t">
+                <h1>Add friends</h1>
+                <div class="choices">
+                    <ion-icon name="filter-outline"></ion-icon>
+                    <ion-icon name="settings-outline"></ion-icon>
+                </div>
+            </div>
+
+            <div class="top-b">
+                <button id="received">Received</button>
+                <button id="sent" style="background-color: white">Sent</button>
+            </div>
+
+        </div>
+
+        <div class="bottom">
+
+            <div class="receiver">
+                {% for each in response %}
+                    {% if each.sender != request.user.id %}
+                        <div class="bocks">
+                            <div class="pic">
+                                <img src="{{ each.profile_picture }}" alt="">
+                            </div>
+                            <div class="middle">
+                                <h3>{{ each.firstname }} {{ each.lastname }}</h3>
+                                <p>{{ each.address }}</p>
+                            </div>
+                            <div class="right">
+                                <ion-icon id="{{ each.id }}-accept"  name="checkmark-outline"></ion-icon>
+                                <ion-icon id="{{ each.id }}-decline" name="close-outline"></ion-icon>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="sent" style="display: none;">
+                {% for each in response %}
+                    {% if each.sender == request.user.id %}
+                        <div class="bocks">
+                            <div class="pic">
+                                <img src="{{ each.profile_picture }}" alt="">
+                            </div>
+                            <div class="middle">
+                                <h3>{{ each.firstname }} {{ each.lastname }}</h3>
+                                <p>{{ each.address }}</p>
+                            </div>
+                            <div class="right">
+                                <button id="{{ each.id }}-decline">Cancel</button>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="line">
+        <div class="l"></div>
+    </div>
+
+    <div class="right">
+
+        <div class="top">
+            <h1>Search for friends</h1>
+            <div class="search">
+                <input id="search" type="text" placeholder="Search">
+                <ion-icon name="search-outline"></ion-icon>
+            </div>
+        </div>
+
+        <div class="bottom">
+{#            <-- Search results will be appended here -->#}
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const search_container = $('.right .bottom');
+            const host = window.location.origin;
+
+            //Search ko output display
+            $('#search').on('input', function() {
+                search_container.empty();
+                let value = $(this).val();
+                if (value.length > 0){
+                    $.ajax({
+                        url: '{% url "add_friend_search" %}',
+                        method: 'GET',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        data: {
+                            'search': value
+                        },
+                        success: function(response){
+                            console.log(response)
+                            response.response.forEach(each => {
+                                let address = null;
+                                let search_add_text = 'Add';
+                                let search_add_icon = 'style="display: block;"';
+                                if (each.friendship_status == 'A') {
+                                    search_add_text = 'Friends';
+                                    search_add_icon = 'style="display: none;"';
+                                }
+                               if (each.address == null) {
+                                   address = '';
+                               } else {
+                                   address = each.address;
+                                 }
+                                search_container.append(`
+                                <div class="blocks">
+                                    <div class="pic">
+                                        <img src="${host}${each.profile_picture}" alt="">
+                                    </div>
+                                    <div class="middle">
+                                        <h3>${each.firstname} ${each.lastname}</h3>
+                                        <p>${address}</p>
+                                    </div>
+                                    <div class="right">
+                                        <div class="options" id="add-${each.id}-${each.friendship_status}">
+                                            <ion-icon name="person-add-outline" ${search_add_icon}></ion-icon>
+                                            <p>${search_add_text}</p>
+                                        </div>
+                                        <div class="options" id="message-${each.id}-${each.friendship_status}">
+                                            <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                                            <p>Message</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                `)
+                            })
+                        }
+                    })
+                }
+            });
+
+
+            //Received and sent button click display
+            $('.add_friend_container .left .top .top-b').on('click', 'button', function() {
+                const received = $('.add_friend_container .left .top #received')
+                const sent = $('.add_friend_container .left .top #sent')
+
+
+                let id = $(this).attr('id')
+                if (id === 'received') {
+                    $('.add_friend_container .left .receiver').css('display', 'block')
+                    $('.add_friend_container .left .sent').css('display', 'none')
+                    received.css('background-color', 'rgba(214, 223, 246, 0.66)')
+                    sent.css('background-color', 'white')
+                } else {
+                    $('.add_friend_container .left .receiver').css('display', 'none')
+                    $('.add_friend_container .left .sent').css('display', 'block')
+                    sent.css('background-color', 'rgba(214, 223, 246, 0.66)')
+                    received.css('background-color', 'white')
+                }
+                $.ajax({
+                    url: '{% url "sent_receiver" %}',
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.response !== 'error') {
+                            $('.add_friend_container .left .receiver').empty()
+                            $('.add_friend_container .left .sent').empty()
+                            response.response.forEach(each => {
+                                if (each.sender != '{{ request.user.id }}') {
+                                    $('.add_friend_container .left .receiver').append(`
+                                    <div class="bocks">
+                                        <div class="pic">
+                                            <img src="${host}${each.profile_picture}" alt="">
+                                        </div>
+                                        <div class="middle">
+                                            <h3>${each.firstname} ${each.lastname}</h3>
+                                            <p>${each.address}</p>
+                                        </div>
+                                        <div class="right">
+                                            <ion-icon id="${each.id}-accept" name="checkmark-outline"></ion-icon>
+                                            <ion-icon id="${each.id}-decline" name="close-outline"></ion-icon>
+                                        </div>
+                                    </div>
+                                    `)
+                                } else {
+                                    $('.add_friend_container .left .sent').append(`
+                                    <div class="bocks">
+                                        <div class="pic">
+                                            <img src="${host}${each.profile_picture}" alt="">
+                                        </div>
+                                        <div class="middle">
+                                            <h3>${each.firstname} ${each.lastname}</h3>
+                                            <p>${each.address}</p>
+                                        </div>
+                                        <div class="right">
+                                            <button id="${each.id}-decline">Cancel</button>
+                                        </div>
+                                    </div>
+                                    `)
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+
+
+            //Search ko add and message handling
+            $(document).on('click', '.add_friend_container .right .bottom .blocks .right .options', function() {
+                const data = $(this).attr('id');
+                const element = $(this);
+
+                $.ajax({
+                    url: '{% url "add_friend_search_add_message" %}',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        'data': data
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response.response !== 'error') {
+                            element.find('ion-icon').css('display', 'none')
+                            element.find('p').text('Requested')
+                            element.attr('id', $(response.response))
+                        }
+                    }
+                });
+            });
+
+
+            //Received request handling
+            $(document).on('click', '.add_friend_container .left  .receiver .bocks .right ion-icon', function() {
+                let data = $(this).attr('id');
+                request_handler(data, $(this).parent());
+            });
+
+
+            //Sent request handling
+            $(document).on('click', '.add_friend_container .left  .sent .bocks .right button', function() {
+                let data = $(this).attr('id');
+                request_handler(data, $(this).parent());
+            });
+
+            function request_handler(data, element) {
+                $.ajax({
+                    url: '{% url "add_friend_request_handler" %}',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        'data': data
+                    },
+                    success: function(response) {
+                        if (response.response === 'success') {
+                            element.parent().remove();
+                        }
+                    }
+                });
+            }
+            
+        })
+
+    </script>
+
+</div>

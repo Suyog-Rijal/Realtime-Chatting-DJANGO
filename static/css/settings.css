@@ -1,0 +1,409 @@
+.settings-container {
+    flex: 1;
+    background-color: white;
+    border-start-start-radius: 40px;
+    display: flex;
+    overflow-y: auto;
+}
+
+.settings-container .left {
+    /*background-color: red;*/
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    min-width: 400px;
+}
+
+.settings-container .right {
+    /*background-color: blue;*/
+    flex: 1;
+    display: flex;
+    padding: 30px;
+}
+
+.settings-container .left .top {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+    gap: 10px;
+    user-select: none;
+}
+
+.settings-container .left .top .pic {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+    position: relative;
+    &:hover {
+        .change {
+            opacity: 1;
+        }
+    }
+}
+
+
+.settings-container .left .top .pic .change {
+    background-color: rgba(214, 223, 246, 0.91);
+    position: absolute;
+    z-index: 1;
+    width: 70%;
+    padding: 5px;
+    bottom: 0;
+    left: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    opacity: 0;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.settings-container .left .top .pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.settings-container .left .top h3 {
+    font-size: 1.5em;
+    font-weight: 550;
+}
+
+.settings-container .left .top p {
+    font-size: .9em;
+    font-weight: 500;
+    color: #333;
+}
+
+.settings-container .left .bottom {
+    /*background-color: pink;*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    padding: 20px;
+    overflow-clip: auto;
+}
+
+.settings-container .left .bottom form {
+    width: 100%;
+    display: flex;
+    /*background-color: green;*/
+    max-width: 600px;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings-container .left .bottom form .parent {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    user-select: none;
+}
+
+.settings-container .left .bottom form .parent .blocks {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding: 10px;
+    /*background-color: red;*/
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.settings-container .left .bottom form .parent .blocks label {
+    font-size: .8em;
+}
+
+.settings-container .left .bottom form .parent .blocks input,
+.settings-container .left .bottom form .parent .blocks select{
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: transparent;
+    outline: none;
+    font-size: 1em;
+}
+
+.settings-container .left .bottom form .actions {
+    display: flex;
+    justify-content: space-evenly;
+    /*background-color: red;*/
+    user-select: none;
+}
+
+.settings-container .left .bottom form .actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgba(214, 223, 246, 0.91);
+    color: black;
+    cursor: pointer;
+    width: 30%;
+}
+
+.right .r-container {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(214, 223, 246, 0);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #ccc;
+}
+
+.right .r-container .top {
+    display: flex;
+    /*background-color: red;*/
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+
+.right .r-container .top .top-1 {
+    /*background-color: pink;*/
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.right .r-container .top .top-1 .left {
+    /*background-color: blue;*/
+    flex: 1;
+    height: 100%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.right .r-container .top .top-1 .left .blocks {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+}
+
+.right .r-container .top .top-1 .left .blocks label {
+    font-size: .9em;
+    font-weight: 500;
+    color: #333;
+}
+
+.right .r-container .top .top-1 .left .blocks input {
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: transparent;
+    outline: none;
+}
+
+.right .r-container .top .top-1 .left button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgba(214, 223, 246, 0.91);
+    color: black;
+    cursor: pointer;
+    width: 50%;
+    &:hover {
+        background-color: rgba(214, 223, 246, 0.75);
+    }
+}
+
+.right .r-container .top .top-1 .middle {
+    width: 5px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right .r-container .top .top-1 .middle .line {
+    width: 1px;
+    height: 100%;
+    background-color: hotpink;
+}
+
+.right .r-container .top .top-1 .right {
+    /*background-color: green;*/
+    flex: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right .r-container .top .top-1 .right p {
+    font-size: .9em;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+}
+
+.right .r-container .bottom {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+}
+
+.right .r-container .bottom .b-t {
+    font-size: .9rem;
+    font-weight: 500;
+    color: #333;
+    padding: 20px 30px;
+}
+
+.right .r-container .bottom .b-b {
+    /*background-color: red;*/
+    display: flex;
+    justify-content: center;
+}
+
+.right .r-container .bottom button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    &:hover {
+        scale: 1.05;
+    }
+}
+
+.settings-container .messages {
+    position: fixed;
+    bottom: 50px;
+    right: 45%;
+}
+
+.settings-container .messages .m-blocks {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+}
+
+
+.deletion {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.deletion .d-container {
+    display: flex;
+    background-color: white;
+    flex-direction: column;
+    max-width: 400px;
+    padding: 20px;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    user-select: none;
+    position: relative;
+}
+
+.deletion .d-container .d-block {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.deletion .d-container h3 {
+    font-size: 1.5em;
+    font-weight: 550;
+    color: red;
+}
+
+.deletion .d-container p {
+    text-align: center;
+}
+
+.deletion .d-container .d-block input {
+    padding: 5px;
+    background-color: transparent;
+    outline: none;
+    border: none;
+}
+
+.deletion .d-container .d-block label {
+    font-size: .9em;
+    color: #646363;
+}
+
+.deletion .d-container button {
+    background-color: red;
+    color: white;
+    padding: 10px;
+    width: 50%;
+    border-radius: 10px;
+    border: none;
+}
+
+.deletion .d-container .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.deletion .d-container .close ion-icon {
+    font-size: 1.5em;
+}
+
+.loading-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid hotpink;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

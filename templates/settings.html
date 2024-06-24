@@ -1,0 +1,393 @@
+{% load static %}
+<div class="settings-container">
+
+    <div class="left">
+
+        <div class="top">
+
+            <div class="pic">
+                <div id="update-profile-pic" class="change">
+                    <p>Change</p>
+                    <input type="file" name="profile-pic" id="profile-pic-selector" accept="image/*" style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                </div>
+                <img src="{{ user.profile_picture.url }}" alt="">
+            </div>
+
+            <h3>{{ user.firstname }} {{ user.lastname }}</h3>
+            <p>{{ user.dob }}</p>
+        </div>
+
+        <div class="bottom">
+            <form>
+                <div class="parent">
+                    <div class="blocks">
+                        <label for="firstname">First Name</label>
+                        <input type="text" id="firstname" name="firstname" value="{{ user.firstname }}" disabled>
+                    </div>
+                    <div class="blocks">
+                        <label for="lastname">Last Name</label>
+                        <input type="text" id="lastname" name="lastname" value="{{ user.lastname }}" disabled>
+                    </div>
+                </div>
+
+                <div class="parent">
+                    <div class="blocks">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="{{ user.email }}" disabled>
+                    </div>
+                    <div class="blocks">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" name="address" value="{{ user.address }}"disabled>
+                    </div>
+                </div>
+
+                <div class="parent">
+                    <div class="blocks">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" disabled>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                            <option value="O">Other</option>
+                        </select>
+                    </div>
+                    <script>
+                        document.getElementById('gender').value = "{{ user.gender }}";
+                    </script>
+                </div>
+
+                <div class="actions">
+                    <button id="save" type="submit">Save</button>
+                    <button id="edit" type="submit">Edit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="right">
+
+        <div class="r-container">
+
+            <div class="top">
+                <h3>Change password</h3>
+                <div class="top-1">
+
+                    <div class="left">
+                        <div class="blocks">
+                            <label for="oldPassword">Old Password</label>
+                            <input type="text" id="oldPassword" name="oldPassword">
+                        </div>
+                        <div class="blocks">
+                            <label for="newPassword">New Password</label>
+                            <input type="text" id="newPassword" name="newPassword">
+                        </div>
+                        <div class="blocks">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="text" id="confirmPassword" name="confirmPassword">
+                        </div>
+                        <button id="change">Change</button>
+                    </div>
+
+
+
+
+                    <div class="middle">
+                        <div class="line"></div>
+                    </div>
+
+
+                    <div class="right">
+                        <p>Change your password to keep your account secure. Make sure you don't share your password with anyone. Giving password to someone else can lead to unauthorized access to your account and can lead to misuse of your account.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom">
+                <div class="b-t">
+                    <p>
+                        <strong>Important Information Before Deleting Your Account</strong><br><br>
+                        Deleting your account is a serious action with significant consequences. Please read the following carefully before proceeding:
+                    </p>
+                    <ul>
+                        <li><strong>Permanent Deletion:</strong> Once you delete your account, all your data, including posts, messages, and profile information, will be permanently removed from our servers. This action is irreversible, and you will not be able to recover any content or data.</li>
+                        <li><strong>Loss of Access:</strong> You will lose access to your account and all associated services. Any login credentials or access to connected third-party services using our platform will be disabled.</li>
+                        <li><strong>Backup Your Data:</strong> Before deleting your account, we strongly recommend downloading any important information you wish to keep, such as photos, videos, and important messages.</li>
+                    </ul>
+                    <p>
+                        If you still wish to delete your account, please go to your account settings, select "Delete Account," and follow the confirmation steps. If you have any questions or need assistance, please contact our support team. Thank you for being a part of our community.
+                    </p>
+                </div>
+                <div class="b-b">
+                    <button id="delete-account">Delete Account</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="messages">
+        <div id="update" class="m-blocks" style="display: none">
+            <p>Credentials updated</p>
+            <img src="{% static 'images/success.gif' %}" width="42">
+        </div>
+        <div id="pass-change" class="m-blocks" style="display: none">
+            <p>Password changed</p>
+            <img src="{% static 'images/success.gif' %}" width="42">
+        </div>
+    </div>
+
+    <div class="deletion">
+
+        <div class="d-container">
+            <div class="close">
+                <ion-icon name="close-outline"></ion-icon>
+            </div>
+            <h3>Deletion</h3>
+            <p>Are you sure you want to delete you account? After deletion you can no longer access you account and its data!!</p>
+            <div class="d-block">
+                <label for="pass">Password</label>
+                <input id="pass" type="text">
+            </div>
+            <button id="delete">Delete</button>
+        </div>
+    </div>
+
+    <div class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+
+            let originalValues = {};
+
+            $('#edit').click(function(e) {
+                e.preventDefault();
+                const inputs = $('.settings-container .left .bottom form input');
+                const selects = $('.settings-container .left .bottom form select');
+
+                const edit = $('#edit');
+                const email = $('#email')
+
+                if (edit.text() === 'Edit') {
+                    inputs.each(function() {
+                        originalValues[this.id] = $(this).val();
+                    });
+                    selects.each(function() {
+                        originalValues[this.id] = $(this).val();
+                    });
+
+                    email.off('input');
+
+                    inputs.prop('disabled', false);
+                    selects.prop('disabled', false);
+                    edit.text('Cancel');
+                } else {
+
+                    inputs.each(function() {
+                        $(this).val(originalValues[this.id]);
+                    });
+                    selects.each(function() {
+                        $(this).val(originalValues[this.id]);
+                    });
+
+                    email.on('input', function() {
+                        const email = $(this).val();
+                        const parent = $(this).parent();
+                        if (email.length > 0) {
+                            $.ajax({
+                                url: '{% url "settings_email_check" %}',
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': '{{ csrf_token }}'
+                                },
+                                data: {
+                                    email: email
+                                },
+                                success: function(response) {
+                                    console.log(response);
+                                    if (response.response == 'success') {
+                                        parent.css('border', '1px solid #ccc');
+                                        $('.settings-container .left .bottom form #save').prop('disabled', false);
+                                    } else {
+                                        parent.css('border', '1px solid red');
+                                        $('.settings-container .left .bottom form #save').prop('disabled', true);
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    inputs.prop('disabled', true);
+                    selects.prop('disabled', true);
+                    edit.text('Edit');
+                    email.css('border', '1px solid #ccc');
+                }
+            });
+
+
+            $('#save').click(function(e) {
+                e.preventDefault();
+                if ($('#edit').text() !== 'Edit') {
+                    $.ajax({
+                        url: '{% url "settings_save" %}',
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        data: {
+                            firstname: $('#firstname').val(),
+                            lastname: $('#lastname').val(),
+                            email: $('#email').val(),
+                            address: $('#address').val(),
+                            gender: $('#gender').val()
+                        },
+                        success: function(response) {
+                            if (response.response == 'success') {
+                                $('.settings-container .messages #update').css('display', 'flex');
+                                setTimeout(() => {
+                                    $('.settings-container .messages #update').css('display', 'none');
+                                }, 1850);
+                                $('#edit').text('Edit');
+                                $('.settings-container .left .bottom form select').prop('disabled', true);
+                                $('.settings-container .left .bottom form input').prop('disabled', true);
+                            }
+                        }
+                    });
+                }
+            });
+
+
+            $('#change').click(function(e) {
+                e.preventDefault();
+                const newPassword = $('#newPassword')
+                const confirmPassword = $('#confirmPassword')
+                const oldPassword = $('#oldPassword')
+                if (newPassword.val() !== confirmPassword.val()) {
+                    confirmPassword.parent().css('border', '1px solid red');
+                    return;
+                }
+                $.ajax({
+                    url: '{% url "settings_password_change" %}',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        oldPassword: oldPassword.val(),
+                        newPassword: newPassword.val()
+                    },
+                    success: function(response) {
+                        newPassword.val('');
+                        confirmPassword.val('');
+                        oldPassword.val('');
+                        newPassword.parent().css('border', '1px solid #ccc');
+                        confirmPassword.parent().css('border', '1px solid #ccc');
+                        oldPassword.parent().css('border', '1px solid #ccc');
+                        if (response.response == 'success') {
+                            $('.settings-container .messages #pass-change').css('display', 'flex');
+                            setTimeout(() => {
+                                $('.settings-container .messages #pass-change').css('display', 'none');
+                                window.location.href = '{% url "logout" %}';
+                            }, 1850);
+                        } else {
+                            oldPassword.parent().css('border', '1px solid red');
+                        }
+
+                    }
+                });
+            });
+
+
+            $('#profile-pic-selector').change(function() {
+                let formData = new FormData();
+                formData.append('profile-pic', this.files[0]);
+                $.ajax({
+                    url: '{% url "settings_profile_picture" %}',
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.response !== 'error') {
+                            $('.settings-container .left .top .pic img').attr('src', response.response);
+                        }
+                        
+                    },
+                    error: function() {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+
+            $('#delete-account').on('click', function() {
+                const delete_container = $('.settings-container .deletion');
+                delete_container.css('display', 'flex');
+
+                const close = delete_container.find('.close');
+                close.on('click', function() {
+                    delete_container.css('display', 'none');
+                });
+
+                const delete_btn = delete_container.find('#delete');
+
+                delete_btn.on('click', function() {
+                    const loadingOverlay = $('.loading-overlay');
+                    loadingOverlay.show();
+                    const pass = delete_container.find('#pass')
+                    $.ajax({
+                        url: '{% url "settings_delete_account" %}',
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        data: {
+                            'password': pass.val()
+                        },
+                        success: function(response) {
+                            loadingOverlay.hide();
+                            if (response.response === 'success') {
+                                window.location.href = '{% url "logout" %}';
+                            } else {
+                                pass.parent().css('border', '1px solid red');
+                            }
+                        }
+                    });
+                });
+            })
+
+            $(document).on('input', '.settings-container .left .bottom form #email', function() {
+                const email = $(this).val();
+                const parent = $(this).parent();
+                if (email.length > 0) {
+                    $.ajax({
+                        url: '{% url "settings_email_check" %}',
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        data: {
+                            email: email
+                        },
+                        success: function(response) {
+                            console.log(response);
+                            if (response.response == 'success') {
+                                parent.css('border', '1px solid #ccc');
+                                $('.settings-container .left .bottom form #save').prop('disabled', false);
+                            } else {
+                                parent.css('border', '1px solid red');
+                                $('.settings-container .left .bottom form #save').prop('disabled', true);
+                            }
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
+
+</div>

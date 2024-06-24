@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}"/>
+    
+    <style>
+        {% if error %}
+            .right .middle .blocks {
+                border: 1px solid red;
+            }
+        {% endif %}
+    </style>
+    
+</head>
+<body>
+<div class="content">
+
+    <div class="popup">
+
+        <div class="forget-password">
+            <h1>Forget password?</h1>
+            <p>Enter your email or phone number and we'll send you a link to get back into your account.</p>
+            <div class="blocks">
+                <label for="reset-email">Email or phone number</label>
+                <input type="email" id="reset-email">
+            </div>
+            <button id="send">Send</button>
+            <button id="cancel">Cancel</button>
+        </div>
+
+    </div>
+
+    <div class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <div class="left">
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" style="width: 100%; height: 100%; user-select: none">
+        </div>
+    </div>
+
+    <div class="right">
+        <img id="heading-logo" src="{% static 'images/logo-icon.png' %}" style="width: 50px; height: 50px; margin-bottom: 10px">
+        <div class="top">
+            <h1>Sign in to Whisper</h1>
+            <div class="blocks">
+                <img src="{% static 'images/google-icon.png' %}" style="margin-right: 5px;">
+                <p>Continue with Google</p>
+            </div>
+            <div class="blocks">
+                <img src="{% static 'images/apple-icon.png' %}">
+                <p>Continue with Apple</p>
+            </div>
+        </div>
+        <div class="line">
+            <div class="left"></div>
+            <p>or</p>
+            <div class="right"></div>
+        </div>
+
+        <form class="middle" method="post">
+            {% csrf_token %}
+            <div class="blocks">
+                <label for="email">Phone or email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="blocks">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" autocomplete="true" required>
+            </div>
+            <button id="signin">Sign in</button>
+        </form>
+
+        <button id="forget">Forget password?</button>
+        <p id="dont-have-account">Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>@2021 Whisper. All rights reserved.</p>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        $('.right .middle .blocks').on('click', function() {
+            $(this).css('border', '1px solid rgba(169, 169, 169, 0.45)');
+        });
+
+        $('#forget').on('click', function() {
+            $('.popup').css('display', 'flex');
+        });
+
+        $('#cancel').on('click', function() {
+            $('.popup').css('display', 'none');
+        });
+
+        $('#send').on('click', function() {
+            const email = $('#reset-email')
+            const loadingOverlay = $('.loading-overlay');
+            loadingOverlay.show();
+
+            $.ajax({
+                url: '{% url "forgot_password" %}',
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                data: {
+                    'email': email.val()
+                },
+                success: function(response) {
+                    loadingOverlay.hide();
+                    if (response.response === 'error') {
+                        email.parent().css('border', '1px solid red');
+                    } else {
+                        $('.popup').css('display', 'none');
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    position: relative;
+    font-family: Arial, sans-serif;
+    width: 100%;
+    height: 100vh;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.content .left {
+    width: 50%;
+    height: 100%;
+
+}
+
+.content .right {
+    width: 50%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.right .top {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.right .top h1 {
+    font-size: 1.5rem;
+    margin: 0 0 15px 0;
+}
+
+.right #heading-logo {
+    display: none;
+}
+
+.right .top .blocks {
+    width: 350px;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    padding: 5px;
+    border: 1px solid rgba(169, 169, 169, 0.45);
+    transition: background-color 0.3s;
+    user-select: none;
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+}
+
+.right .top .blocks p {
+    font-size: .8rem;
+}
+
+.right .line {
+    width: 350px;
+    align-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.right .line p {
+    padding: 0 5px;
+}
+
+.right .line .right,
+.right .line .left {
+    width: 45%;
+    height: 1px;
+    background-color: pink;
+}
+
+.right .middle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.right .middle .blocks {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    padding: 8px 0 0 15px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(169, 169, 169, 0.45);
+
+}
+
+.right .middle .blocks label {
+    font-size: 0.7rem;
+    color: grey;
+
+}
+
+.right .middle .blocks input {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    height: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size:1rem;
+
+}
+
+.right .middle #signin,
+.right #forget{
+    width: 350px;
+    padding: 12px;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 10px 0;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    background-color: transparent;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.right .middle #signin {
+    background-color: black;
+    color: white;
+    transition: background-color 0.3s;
+    user-select: none;
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+}
+
+.right #forget {
+    padding: 10px;
+    background-color: white;
+    color: black;
+    border: 1px solid rgba(128, 128, 128, 0.31);
+    transition: background-color 0.3s;
+    user-select: none;
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+}
+
+.right #dont-have-account {
+    width: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 0.8rem;
+}
+
+.right #dont-have-account a {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+    }
+    margin: 0 5px;
+}
+
+.content .left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content .left .logo {
+    margin-bottom: 100px;
+}
+
+.content .left .logo img {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 700px) {
+    .content {
+        justify-content: center;
+    }
+    .content .left {
+        display: none;
+    }
+
+    .content .right .line .left,
+    .content .right .line .right{
+        display: none;
+    }
+
+    .right #heading-logo {
+        display: block;
+    }
+}
+
+
+
+.footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+
+}
+
+.footer p {
+    color: grey;
+    font-size: 0.8rem;
+}
+
+.popup {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    display: none;
+    user-select: none;
+}
+
+.popup .forget-password {
+    max-width:350px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    gap: 20px;
+    padding: 20px;
+}
+
+.popup .forget-password h1 {
+    font-size: 1.5rem;
+}
+
+.popup .forget-password p {
+    font-size: 0.8rem;
+}
+
+.popup .forget-password .blocks {
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    border: 1px solid rgba(169, 169, 169, 0.45);
+}
+
+.popup .forget-password .blocks label {
+    font-size: 0.8rem;
+    color: grey;
+}
+
+.popup .forget-password .blocks input {
+    width: 100%;
+    border-radius: 5px;
+    height: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size:1rem;
+    padding: 5px;
+}
+
+.popup .forget-password button {
+    padding: 12px;
+    width: 100%;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 5px 0;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    background-color: black;
+    color: white;
+    transition: background-color 0.3s;
+    user-select: none;
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+}
+
+.loading-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid hotpink;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/chat.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/add_friend.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/settings.css' %}">
+    <script src="{% static 'js/base.js' %}"></script>
+
+    <title>Whisper</title>
+</head>
+<body>
+    {% if not request.user.is_authenticated %}
+        <script>
+            window.location.href = '{% url "login" %}';
+        </script>
+    {% endif %}
+
+<div class="sidebar">
+    <div class="s-top">
+        <ion-icon name="chatbubble-ellipses-outline" id="chat" title="Chat"></ion-icon>
+        <ion-icon name="person-add-outline" id="add_friend" title="Add friend"></ion-icon>
+        <ion-icon name="notifications-outline" id="notification" title="Notification"></ion-icon>
+    </div>
+
+    <div class="s-bottom">
+        <ion-icon name="log-out-outline" style="font-size: 1.5em;" id="logout" title="Logout"></ion-icon>
+        <ion-icon name="archive-outline" id="archive" title="Archived"></ion-icon>
+        <ion-icon name="settings-outline" id="settings" title="Settings"></ion-icon>
+    </div>
+    
+
+
+</div>
+
+<div class="container"></div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    
+<script>
+    $(document).ready(function() {
+        let container = $('.container');
+
+        container.load('{% url "chat" %}');
+
+
+        $('.sidebar ion-icon').click(function() {
+            if ($(this).attr('id') === 'logout') {
+                window.location.href = '{% url "logout" %}';
+                return;
+            }
+            $.ajax({
+                url: '{% url "sidebar" %}',
+                method: 'GET',
+                data: {
+                    action: $(this).attr('id')
+                },
+                success: function(data) {
+                    $(document).off('click');
+                    container.html(data);
+                    
+                }
+            })
+        })
+    })
+</script>
+
+
+</body>
+</html>

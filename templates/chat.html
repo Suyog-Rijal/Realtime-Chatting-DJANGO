@@ -1,0 +1,415 @@
+{% load static %}
+<div class="chat-container">
+
+    <div class="left">
+
+        <div class="l-top">
+            <div class="l-top-t">
+                <h2>Messages</h2>
+                <ion-icon name="filter-outline"></ion-icon>
+            </div>
+            <div class="l-top-b">
+                <ion-icon name="search-outline"></ion-icon>
+                <label>
+                    <input type="text" placeholder="Search">
+                </label>
+            </div>
+        </div>
+
+        <div class="l-bottom">
+
+            {% for each in response %}
+                <div class="blocks" id="{{ each.id }}">
+                    <div class="pic">
+                        <img src="{{ each.profile_picture }}" alt="">
+                    </div>
+                    <div class="middle">
+                        <h3>{{ each.firstname }} {{ each.lastname }}</h3>
+                        {% if each.message != null %}
+                            {% if each.type == 'text' %}
+                                <p id="last-message">{{ each.message }}</p>
+                            {% else %}
+                                <p>Image</p>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    <div class="right">
+                        <div class="status">
+                            <ion-icon name="checkmark-done-outline"></ion-icon>
+                            <p style="display: none;">6</p>
+                        </div>
+                        <div class="time">
+                            <p>1d</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+
+    <div class="start-message">
+        <p style="font-size: 20px;"><strong>Nurture Your Connections</strong></p>
+        <p>Reach out to your loved ones today. A simple hello can go a long way.</p>
+    </div>
+
+    <div class="right">
+
+        <div class="top">
+            <div class="t-l">
+                <div class="pic">
+                    <img src="">
+                </div>
+            </div>
+            <div class="t-m">
+                <h3></h3>
+                <p>Active 1h ago</p>
+            </div>
+            <div class="t-r">
+                <ion-icon name="call-outline"></ion-icon>
+                <ion-icon name="videocam-outline"></ion-icon>
+                <ion-icon name="information-circle-outline"></ion-icon>
+            </div>
+        </div>
+
+        <div class="middle">
+            <div class="chat">
+
+{#                <--Dynamic Chat Goes Here-->#}
+
+            </div>
+        </div>
+
+        <div class="bottom">
+            <div class="b-l">
+                <ion-icon id="file-selector" name="add-outline"></ion-icon>
+                <ion-icon id="pic-selector" name="camera-outline"></ion-icon>
+                <ion-icon name="mic-outline"></ion-icon>
+            </div>
+            <div class="b-m">
+                <input id="messageInput" type="text" placeholder="Type a message">
+            </div>
+            <div class="b-r">
+                <ion-icon id="messageSend" name="send-outline"></ion-icon>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let c_socket = null;
+            let currentRoomId = null;
+            clearChatSockets();
+
+            $(document).on('click', '.chat-container .left .l-bottom .blocks', function() {
+                $('.chat-container .right').css('display', 'flex');
+                $('.chat-container .start-message').css('display', 'none');
+                const id = $(this).attr('id');
+                const chat = $('.chat-container .right .middle .chat');
+                const name = $('.chat-container .right .top .t-m h3');
+                const profile_picture = $('.chat-container .right .top .t-l .pic img');
+                const profile_picture_uri = $(this).find('.pic img').attr('src');
+                name.text($(this).find('.middle h3').text());
+                profile_picture.attr('src', profile_picture_uri);
+                $.ajax({
+                    url: '{% url "load_chat" %}',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        friendship_id: id
+                    },
+                    success: function(response) {
+                        chat.empty();
+                        response.response.forEach(each => {
+                            let filename = null;
+                            if (each.chat_files != null) {
+                                console.log(each.chat_files);
+                                let parts = each.chat_files.split('/');
+                                filename = parts.pop();
+                            }
+                            if (each.sender == '{{ user.id }}') {
+                                if (each.type === 'text') {
+                                    chat.append(`
+                                    <div class="sent">
+                                        <div class="s-t">
+                                            <div class="options">
+                                                <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+                                                <p class="timestamp">${each.timestamp}</p>
+                                            </div>
+                                            <div class="message">
+                                                <p>${each.message}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `)
+                                } else if (each.type === 'file') {
+                                    chat.append(`
+                                    <div class="sent">
+                                        <div class="s-t">
+                                            <div class="options">
+                                                <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+                                                <p class="timestamp">${each.timestamp}</p>
+                                            </div>
+                                            <div class="message" style="border-radius: 15px; max-width: 250px; text-align: center; background-color: whitesmoke; cursor: pointer">
+                                                <a href="${each.chat_files}" download="${filename}" class="file-download">
+                                                    <img src="{% static 'images/file.png' %}" alt="File does'nt exist" width=100>
+                                                    <p style="max-width: 200px; overflow-x: auto; white-space: nowrap; text-overflow: ellipsis; color: black;">${filename}</p>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `)
+                                }
+                                else {
+                                    chat.append(`
+                                    <div class="sent">
+                                        <div class="s-t">
+                                            <div class="options">
+                                                <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+                                                <p class="timestamp">${each.timestamp}</p>
+                                            </div>
+                                            <div class="message" style="border-radius: 15px; max-width: 250px; background-color: transparent;">
+                                                <img src="..${each.chat_picture}" style="width: 100%; border-radius: 15px; object-fit: cover; object-position: center;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `)
+                                }
+                            }
+
+
+
+
+
+                            else {
+                                profile_picture.attr('src', each.profile_picture);
+                                if (each.type === 'text') {
+                                    chat.append(`
+                                    <div class="received">
+                                        <div class="r-t">
+                                            <div class="pic">
+                                                <img src="${each.profile_picture}" alt="">
+                                            </div>
+                                            <div class="message">
+                                                <p>${each.message}</p>
+                                            </div>
+                                            <div class="options">
+                                                <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+                                                <p class="timestamp">${each.timestamp}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `)
+                                } else if (each.type === 'file') {
+                                    chat.append(`
+                                        <div class="received">
+                                            <div class="r-t">
+                                                <div class="pic">
+                                                    <img src="${each.profile_picture}" alt="">
+                                                </div>
+                                                <div class="message" style="border-radius: 15px; max-width: 250px; text-align: center; background-color: whitesmoke; cursor: pointer">
+                                                    <a href="${each.chat_files}" download="${filename}" class="file-download">
+                                                        <img src="{% static 'images/file.png' %}" alt="File does'nt exist" width=100>
+                                                        <p style="max-width: 200px; overflow-x: auto; white-space: nowrap; text-overflow: ellipsis; color: black;">${filename}</p>
+                                                    </a>
+                                                </div>
+                                                <div class="options">
+                                                    <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+                                                    <p class="timestamp">${each.timestamp}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `);
+                                }
+
+                                else {
+                                    chat.append(`
+                                    <div class="received">
+                                        <div class="r-t">
+                                            <div class="pic">
+                                                <img src="${each.profile_picture}" alt="">
+                                            </div>
+                                            <div class="message" style="border-radius: 15px; max-width: 250px; background-color: transparent;">
+                                                <img src="..${each.chat_picture}" style="width: 100%; border-radius: 15px; object-fit: cover; object-position: center;">
+                                            </div>
+                                            <div class="options">
+                                                <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+                                                <p class="timestamp">${each.timestamp}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `)
+                                }
+                            }
+                        });
+                    }
+                });
+
+                if (c_socket && currentRoomId !== id) {
+                    c_socket.close();
+                    c_socket = null;
+                }
+
+                if (!c_socket) {
+                    const socketType = window.location.protocol === 'https:' ? 'wss' : 'ws';
+                    const endPoint = `${socketType}://${window.location.host}/ws/chat/${id}/`;
+                    c_socket = new WebSocket(endPoint);
+                    chatSockets.push(c_socket);
+                    currentRoomId = id;
+
+                    c_socket.onopen = function(e) {
+                        console.log('Connection established:', id);
+                    }
+
+                    c_socket.onclose = function(e) {
+                        console.log('Connection closed');
+                    }
+
+                    c_socket.onerror = function(e) {
+                        console.log('Error:', e);
+                    }
+
+                    c_socket.onmessage = function(e) {
+                        scrollToBottom();
+                        const data = JSON.parse(e.data);
+                        $('#last-message').text(data.message);
+                        if (data.sender_id == '{{ user.id }}') {
+                            chat.append(`
+                            <div class="sent">
+                                <div class="s-t">
+                                    <div class="options">
+                                        <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+                                        <p class="timestamp">${data.timestamp}</p>
+                                    </div>
+                                    <div class="message">
+                                        <p>${data.message}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            `)
+                        } else {
+                            chat.append(`
+                            <div class="received">
+                                <div class="r-t">
+                                    <div class="pic">
+                                        <img src="${profile_picture_uri}" alt="">
+                                    </div>
+                                    <div class="message">
+                                        <p>${data.message}</p>
+                                    </div>
+                                    <div class="options">
+                                        <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+                                        <p class="timestamp">${data.timestamp}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            `)
+                        }
+                    }
+
+                    const messageInput = $('#messageInput');
+                    const messageSend = $('#messageSend');
+
+                    messageInput.keypress(function(e) {
+                        if (e.which == 13) {
+                            sendMessage('text_message');
+                        }
+                    });
+
+                    messageSend.click(function() {
+                        sendMessage('text_message');
+                    });
+
+                    function sendMessage() {
+                        const message = messageInput.val();
+                        if (message) {
+                            c_socket.send(JSON.stringify({
+                                'message': message,
+                                'sender_id': '{{ user.id }}',
+                                'token': generateToken(),
+                            }));
+                            messageInput.val('');
+                        }
+                    }
+
+                    function generateToken() {
+                        return Math.random().toString(36).substr(2);
+                    }
+
+                    function scrollToBottom() {
+                        chat.scrollTop(chat[0].scrollHeight);
+                    }
+                }
+
+                $('#pic-selector').on('click', function() {
+                    let input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.click();
+
+                    input.onchange = function() {
+                        let formData = new FormData();
+                        formData.append('image', input.files[0]);
+                        formData.append('sender_id', '{{ user.id }}');
+                        formData.append('token', generateToken());
+                        formData.append('friendship_id', id);
+
+                        $.ajax({
+                            url: '{% url "chat_receive_image" %}',
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                console.log(response);
+                            }
+                        });
+                    }
+                });
+
+
+                $('#file-selector').on('click', function() {
+                    let input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'application/pdf,.zip,application/zip,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,.txt,text/plain';
+                    input.click();
+                    
+                    input.onchange = function() {
+                        let formData = new FormData();
+                        formData.append('file', input.files[0]);
+                        formData.append('sender_id', '{{ user.id }}');
+                        formData.append('token', generateToken());
+                        formData.append('friendship_id', id);
+
+                        $.ajax({
+                            url: '{% url "chat_receive_file" %}',
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                console.log(response);
+                            }
+                        });
+                    }
+                });
+
+
+            });
+
+
+        });
+    </script>
+
+</div>

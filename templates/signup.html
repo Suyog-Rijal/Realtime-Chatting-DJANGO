@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/signup.css' %}"/>
+    <title>Signup</title>
+</head>
+<body>
+<div class="logo" style="margin-bottom: 10px;">
+    <h1>Signup to Whisper</h1>
+    <img src="{% static 'images/logo-icon.png' %}" alt="Whisper Logo" id="heading-logo" width="auto" height="30" style="margin-left: 5px">
+</div>
+
+<div class="content">
+
+    <div class="left">
+        <form class="top" method="post">
+            {% csrf_token %}
+            <div class="block">
+                <div class="firstname">
+                    <label for="firstname">First name</label>
+                    <input type="text" id="firstname" name="firstname" required>
+                </div>
+                <div class="line"></div>
+                <div class="lastname">
+                    <label for="lastname">Last name</label>
+                    <input type="text" id="lastname" name="lastname" required>
+                </div>
+            </div>
+            <div class="blocks" id="email-block">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="blocks">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="true">
+            </div>
+            <div class="blocks">
+                <label for="dob">Date of birth</label>
+                <input type="date" id="dob" name="dob" required>
+            </div>
+            <div class="blocks">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="O">Other</option>
+                </select>
+            </div>
+
+            <div class="message">
+                <p>Email already exist</p>
+            </div>
+            <button id="signup">Sign up</button>
+        </form>
+        <div class="bottom">
+            <a href="#">Whisper user agreement</a>
+            <a href="">User Privacy Protection Agreement</a>
+            <a href="">About Whisper</a>
+        </div>
+    </div>
+
+    <div class="line">
+        <div class="exact-line"></div>
+    </div>
+
+    <div class="right">
+        <div class="top">
+            <p>Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+            <p>or</p>
+            <h3>Continue with</h3>
+            <div class="options">
+                <img src="{% static 'images/google-icon.png' %}" width="35" height="35">
+                <img src="{% static 'images/apple-icon.png' %}" width="35" height="35">
+            </div>
+        </div>
+        <div class="line"></div>
+        <div class="bottom">
+            <h2>What is Whisper?</h2>
+            <p>Whisper is a cutting-edge social media and messaging platform that allows you to connect and communicate with friends, family, and new acquaintances in a seamless, secure, and intuitive way. Whether you're sharing moments through text, images, or videos, Whisper ensures your conversations are private and personalized. Join Whisper to experience a new level of instant messaging and social interaction, all in one place.</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>@2021 Whisper. All rights reserved.</p>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        const errorMessage = $('.message');
+        const element = $('#email').parent()
+        $(document).on('input', '#email', function() {
+            let input = $(this).val();
+            if (input.length > 9) {
+                $.ajax({
+                    url: '{% url "validate_email" %}',
+                    method: 'GET',
+                    data: {
+                        email: $(this).val()
+                    },
+                    success: function(response) {
+                        if (response.valid) {
+                            errorMessage.css('display', 'none');
+                            element.css('border', '1px solid #ccc');
+                        } else {
+                            errorMessage.css('display', 'flex');
+                            element.css('border', '1px solid red');
+                        }
+                    }
+                })
+            }
+        });
+    })
+</script>
+</body>
+</html>

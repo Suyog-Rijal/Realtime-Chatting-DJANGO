@@ -1,0 +1,126 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/verify.css' %}">
+    <title>Wispher</title>
+    <style>
+        {% if error %}
+        	.verify .vc form .code input {
+                border: 1px solid red;
+            }
+
+            .verify .vc form .code input:focus {
+                border: 1px solid red;
+            }
+        {% endif %}
+    </style>
+</head>
+<body>
+
+<div class="verify">
+    <div class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+    <div class="vc">
+
+        <div class="close">
+            <img width="26" height="26" src="https://img.icons8.com/metro/26/close-window.png" alt="close-window"/>
+        </div>
+
+        <h1>Verification</h1>
+        <p style="margin-bottom: 5px;">Code has been sent to: {{ email }}</p>
+        
+        <form action="{% url 'verify' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="email" value="{{ email }}">
+            <div class="code">
+                <input name="c0" type="text" maxlength="1" pattern="[0-9]" required autofocus>
+                <input name="c1" type="text" maxlength="1" pattern="[0-9]" required>
+                <input name="c2" type="text" maxlength="1" pattern="[0-9]" required>
+                <input name="c3" type="text" maxlength="1" pattern="[0-9]" required>
+                <input name="c4" type="text" maxlength="1" pattern="[0-9]" required>
+            </div>
+            <button type="submit">Verify</button>
+        </form>
+        <p id="resend-p">Didn't receive the code? <a href="#">Resend</a></p>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        $('.close').click(function() {
+            window.location.href = '/';
+        })
+
+        $('#resend-p a').click(function() {
+            $('.loading-overlay').show();
+            setTimeout(function() {
+                $('.loading-overlay').hide();
+            }, 3000);
+            $.ajax({
+                url: "{% url 'send_verification_code' %}",
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                data: {
+                    email: "{{ email }}"
+                },
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var inputs = document.querySelectorAll('.code input');
+        inputs.forEach(function(input, index) {
+            input.addEventListener('input', function() {
+                moveToNext(input, index);
+            });
+            input.addEventListener('keydown', function() {
+                moveToPrev(input, index);
+            });
+            input.addEventListener('paste', function(event) {
+                event.preventDefault();
+                var pastedText = (event.clipboardData || window.clipboardData).getData('text');
+                var characters = pastedText.split('');
+                characters.forEach(function(character, i) {
+                    if (index + i < inputs.length) {
+                        inputs[index + i].value = character;
+                        moveToNext(inputs[index + i], index + i);
+                    }
+                });
+            });
+        });
+    });
+
+    function moveToNext(input, index) {
+        var maxLength = parseInt(input.getAttribute('maxlength'));
+        var currentLength = input.value.length;
+        if (currentLength >= maxLength) {
+            var nextInput = input.nextElementSibling;
+            if (nextInput && nextInput.tagName.toLowerCase() === 'input') {
+                nextInput.focus();
+            }
+        }
+    }
+
+    function moveToPrev(input, index) {
+        if (event.keyCode === 8 && input.value.length === 0 && index > 0) {
+            var prevInput = input.previousElementSibling;
+            if (prevInput && prevInput.tagName.toLowerCase() === 'input') {
+                prevInput.focus();
+            }
+        }
+    }
+
+</script>
+
+</body>
+</html>

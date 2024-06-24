@@ -1,0 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.verify {
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.verify .vc {
+    position: relative;
+    border-radius: 15px;
+    width: 500px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    gap: 20px;
+}
+
+.verify .vc .close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.verify .vc h1 {
+    font-size: 2rem;
+}
+
+.verify .vc p {
+    font-size: 1rem;
+}
+
+.verify .vc form {
+    padding: 0 20px;
+    width: 100%;
+    /*background-color: red;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 25px;
+}
+
+.verify .vc .code {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+
+}
+
+.verify .vc .code input {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    border: 1px solid #000;
+    border-radius: 10px;
+    text-align: center;
+    outline: none;
+}
+
+.verify .vc .code input:focus {
+    border: 2px solid black;
+}
+
+.verify .vc button {
+    font-size: 1rem;
+    width: 200px;
+    height: 45px;
+    align-self: center;
+    border-radius: 25px;
+    background-color: black;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s;
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+}
+
+
+.verify .vc .close svg {
+    width: 30px;
+    height: 30px;
+}
+
+#resend-p {
+    font-size: 1rem;
+}
+
+#resend-p a {
+    color: deeppink;
+    text-decoration: none;
+}
+
+.loading-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid hotpink;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
