@@ -1,4 +1,4 @@
-*.py linguist-language=Python
-*.html linguist-documented=Python
-*.css linguist-documented=Python
-*.js linguist-documented=Python
+*.py github-linguist-language=Python
+*.html github-linguist-language=Python
+*.css github-linguist-language=Python
+*.js github-linguist-language=Python
