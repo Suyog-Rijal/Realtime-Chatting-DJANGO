@@ -81,3 +81,17 @@ This is a chat web application written in Django. It allows users to send and re
     ```
 
     The application will be available at `http://127.0.0.1:8000/`.
+
+## Demo images
+
+<table>
+  <tr>
+    <td><img src="image.png" alt="Image 1" style="width: 100%;"/></td>
+    <td><img src="image-1.png" alt="Image 2" style="width: 100%;"/></td>
+  </tr>
+  <tr>
+    <td><img src="image-3.png" alt="Image 3" style="width: 100%;"/></td>
+    <td><img src="image-2.png" alt="Image 4" style="width: 100%;"/></td>
+  </tr>
+</table>
+
